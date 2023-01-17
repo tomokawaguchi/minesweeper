@@ -292,6 +292,11 @@ public class Minesweeper {
 	 * It prints a message depending on the user results
 	 */
 	public static void showResult() {
+		printProgress();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		
 		if(!hasNextTurn) {
 			System.out.println("!!! Booom !!!\nGame Over...");
 		} else {
