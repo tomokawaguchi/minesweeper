@@ -39,8 +39,9 @@ public class Minesweeper {
 
 			// Allocate the numbers around the mines in cellsArray
 			minsweeperGame.handleNumOfMinesSurrounded();
-
-			//printAll(); // for the dev
+			
+			// ---- DELETE LATER ---- 
+			//printAll(); // for the dev purpose
 
 			while (minsweeperGame.hasNextTurn) {
 				// Print a current progress of a game
@@ -333,42 +334,42 @@ public class Minesweeper {
 		}
 	}
 
-	// For dev purpuse
-	public static void printAll() {
-
-		// Insert tab space
-		System.out.print("\t");
-
-		// For the coordinates for the row
-		for (int i = 0; i < 10; i++) {
-			System.out.print("  " + i + " ");
-		}
-
-		System.out.println(); // Insert one line for readability
-
-		// For the each columns
-		for (int i = 0; i < 10; i++) {
-			// For the coordinates for the columns
-			// Insert tab space and |
-			System.out.println();
-			System.out.print(" " + i + "\t| ");
-
-			for (int j = 0; j < 10; j++) {
-				Cell current = cellsArray[i][j];
-
-				if (current.getMinesNearby() == 999) {
-					// For a mine cell
-					System.out.print("x");
-
-				} else {
-					// For a non-mine cell --> 1 ~ 8
-					System.out.print(current.getMinesNearby());
-				}
-
-				// Print | for the end of coordinate
-				System.out.print(" | ");
-			}
-
-		}
-	}
+	// For dev purpose
+//	public static void printAll() {
+//
+//		// Insert tab space
+//		System.out.print("\t");
+//
+//		// For the coordinates for the row
+//		for (int i = 0; i < 10; i++) {
+//			System.out.print("  " + i + " ");
+//		}
+//
+//		System.out.println(); // Insert one line for readability
+//
+//		// For the each columns
+//		for (int i = 0; i < 10; i++) {
+//			// For the coordinates for the columns
+//			// Insert tab space and |
+//			System.out.println();
+//			System.out.print(" " + i + "\t| ");
+//
+//			for (int j = 0; j < 10; j++) {
+//				Cell current = cellsArray[i][j];
+//
+//				if (current.getMinesNearby() == 999) {
+//					// For a mine cell
+//					System.out.print("x");
+//
+//				} else {
+//					// For a non-mine cell --> 1 ~ 8
+//					System.out.print(current.getMinesNearby());
+//				}
+//
+//				// Print | for the end of coordinate
+//				System.out.print(" | ");
+//			}
+//
+//		}
+//	}
 }
