@@ -6,81 +6,94 @@ import java.util.Scanner;
 
 public class Minesweeper {
 
-	// This arrays holds all the numbers and mines --> reference to game answer
-	final static Cell[][] cellsWithAll = new Cell[10][10];
+	// This arrays holding all the cells
+	final private static Cell[][] cellsArray = new Cell[10][10];
 
-	static int[] userInput = new int[2]; // e.g { 2, 6 } --> assign from Scanner value
+	private int[] userInput = new int[2]; // e.g { 2, 6 } --> assign from Scanner value
 
 	// To keep track of if a game is still continuing or not
-	static boolean hasNextTurn = true;
-
+	private boolean hasNextTurn = true;
+	
 	// Scanner to read user's input
-	static Scanner userInputScanner = new Scanner(System.in);
+	private Scanner userInputScanner = new Scanner(System.in);
+
+	private boolean playAgain = true;
 
 	public static void main(String[] args) {
+		// Minesweeper instance
+		Minesweeper minsweeperGame = new Minesweeper();
 
 		// Placing a default Cell classes in 10x10 arrays
-		placeCells();
+		minsweeperGame.placeCells();
 
-		// Generate a random number pairs for mine coordinates
-		int[][] minesCoordinates = generateRandomMineCoordinate();
-		
-		// Place mines based on the random coordinates generated
-		placeMines(minesCoordinates);
-		
-		// Allocate the numbers around the mines in cellsWithAll
-		handleNumOfMinesSurrounded();
-		
-		// printAll(); // for the dev 
-
-		while (hasNextTurn) {
-			// Print a current progress of a game
-			printProgress();
-
-			System.out.println();
-			System.out.println();
-
-			// Validate the input if it's integer
-			userInput[0] = getUserInput("Enter Column Number: ");
-			userInput[1] = getUserInput("Enter Row Number: ");
-
-			// Look up selected coordinate in cellsWithAll
-			Cell selectedCell = cellsWithAll[userInput[0]][userInput[1]];
+		while (minsweeperGame.playAgain) {
 			
-			// Update the Cell state 
-			selectedCell.setIsRevealed();
+			// Reset the hasNextTurn
+			minsweeperGame.hasNextTurn = true;
+
+			// Generate a random number pairs for mine coordinates
+			int[][] minesCoordinates = minsweeperGame.generateRandomMineCoordinate();
+
+			// Place mines based on the random coordinates generated
+			minsweeperGame.placeMines(minesCoordinates);
+
+			// Allocate the numbers around the mines in cellsArray
+			minsweeperGame.handleNumOfMinesSurrounded();
+
+			//printAll(); // for the dev
+
+			while (minsweeperGame.hasNextTurn) {
+				// Print a current progress of a game
+				minsweeperGame.printProgress();
+
+				System.out.println();
+				System.out.println();
+
+				// Validate the input if it's integer
+				minsweeperGame.userInput[0] = minsweeperGame.getUserInput("Enter Column Number: ");
+				minsweeperGame.userInput[1] = minsweeperGame.getUserInput("Enter Row Number: ");
+
+				// Look up selected coordinate in cellsArray
+				Cell selectedCell = cellsArray[minsweeperGame.userInput[0]][minsweeperGame.userInput[1]];
+
+				// Update the Cell state
+				selectedCell.setIsRevealed();
+
+				// If selected cell has mine, exit
+				if (selectedCell.getMinesNearby() == 999) minsweeperGame.hasNextTurn = false;
+
+				// If a use reveals all the cell except mines, break out the loop
+				if (minsweeperGame.hasRevealedAll()) break;
+			}
+
+			// Show Result
+			minsweeperGame.showResult();
+
+			// Ask a user if playing again
+			minsweeperGame.handlePlayAgain();
 			
-			// If selected cell has mine, exit
-			if (selectedCell.getMinesNearby() == 999) hasNextTurn = false;
-			
-			// If a use reveals all the cell except mines, break out the loop
-			if (hasRevealedAll()) break;	
 		}
-		
-		// Show Result
-		showResult();
-		
-	}
+
+	}	
 	
-	
+
 	/**
 	 * Placing a default Cell classes in 10x10 arrays
 	 */
-	public static void placeCells() {
-		for (int i = 0; i < cellsWithAll.length; i++) {
-			for (int j = 0; j < cellsWithAll[i].length; j++) {
-				cellsWithAll[i][j] = new Cell();
+	public void placeCells() {
+		for (int i = 0; i < cellsArray.length; i++) {
+			for (int j = 0; j < cellsArray[i].length; j++) {
+				cellsArray[i][j] = new Cell();
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * @return 2D int arrays that has 10 slots, and each has a pair of coordinate
 	 *         with number between 0 ~ 9
 	 *
 	 */
-	public static int[][] generateRandomMineCoordinate() {
+	public int[][] generateRandomMineCoordinate() {
 
 		Random random = new Random();
 		int[][] minesCoordinates = new int[10][2];
@@ -102,92 +115,88 @@ public class Minesweeper {
 
 		return minesCoordinates;
 	}
-	
-	
+
 	/**
 	 * 
 	 * @param minesCoordinates is 2D arrays that contains non-identical pairs of numbers
-	 * 
 	 * Looping through minesCoordinates arrays to log 999 at the mine coordinate position
 	 * 
 	 */
-	public static void placeMines(int[][] minesCoordinates) {
+	public void placeMines(int[][] minesCoordinates) {
 		for (int i = 0; i < minesCoordinates.length; i++) {
 			int[] coordinate = minesCoordinates[i]; // e.g. [2, 6]
 			// 999 to indicate it's a cell with mine
-			cellsWithAll[coordinate[0]][coordinate[1]].setMinesNearby(999);
-			cellsWithAll[coordinate[0]][coordinate[1]].setHasMine(true);
+			cellsArray[coordinate[0]][coordinate[1]].setMinesNearby(999);
+			cellsArray[coordinate[0]][coordinate[1]].setHasMine(true);
 		}
 	}
-	
-	
-	/**
-	 * This method is to allocate and assigned the number of mines surrounded 
-	 * on each cell in the cellsWithAll arrays
-	 */
-	public static void handleNumOfMinesSurrounded() {
-		for (int i = 0; i < cellsWithAll.length; i++) {
-			for (int j = 0; j < cellsWithAll[i].length; j++) {
 
-				if (cellsWithAll[i][j].getMinesNearby() == 999) {
+	/**
+	 * This method is to allocate and assigned the number of mines surrounded on
+	 * each cell in the cellsArray arrays
+	 */
+	public void handleNumOfMinesSurrounded() {
+		for (int i = 0; i < cellsArray.length; i++) {
+			for (int j = 0; j < cellsArray[i].length; j++) {
+
+				if (cellsArray[i][j].getMinesNearby() == 999) {
 					if (j != 0) {
 						// left
-						if (cellsWithAll[i][j - 1].getMinesNearby() != 999) {
-							cellsWithAll[i][j - 1].increaseMinesNearbyByOne();
+						if (cellsArray[i][j - 1].getMinesNearby() != 999) {
+							cellsArray[i][j - 1].increaseMinesNearbyByOne();
 						}
 
 						// left up
-						if (i != 0 && cellsWithAll[i - 1][j - 1].getMinesNearby() != 999) {
-							cellsWithAll[i - 1][j - 1].increaseMinesNearbyByOne();
+						if (i != 0 && cellsArray[i - 1][j - 1].getMinesNearby() != 999) {
+							cellsArray[i - 1][j - 1].increaseMinesNearbyByOne();
 						}
 
 						// left bottom
-						if (i != 9 && cellsWithAll[i + 1][j - 1].getMinesNearby() != 999) {
-							cellsWithAll[i + 1][j - 1].increaseMinesNearbyByOne();
+						if (i != 9 && cellsArray[i + 1][j - 1].getMinesNearby() != 999) {
+							cellsArray[i + 1][j - 1].increaseMinesNearbyByOne();
 						}
 
 					}
 
 					if (j != 9) {
 						// right
-						if (cellsWithAll[i][j + 1].getMinesNearby() != 999) {
-							cellsWithAll[i][j + 1].increaseMinesNearbyByOne();
+						if (cellsArray[i][j + 1].getMinesNearby() != 999) {
+							cellsArray[i][j + 1].increaseMinesNearbyByOne();
 						}
 
 						// right up
-						if (i != 0 && cellsWithAll[i - 1][j + 1].getMinesNearby() != 999) {
-							cellsWithAll[i - 1][j + 1].increaseMinesNearbyByOne();
+						if (i != 0 && cellsArray[i - 1][j + 1].getMinesNearby() != 999) {
+							cellsArray[i - 1][j + 1].increaseMinesNearbyByOne();
 						}
 
 						// right bottom
-						if (i != 9 && cellsWithAll[i + 1][j + 1].getMinesNearby() != 999) {
-							cellsWithAll[i + 1][j + 1].increaseMinesNearbyByOne();
+						if (i != 9 && cellsArray[i + 1][j + 1].getMinesNearby() != 999) {
+							cellsArray[i + 1][j + 1].increaseMinesNearbyByOne();
 						}
 					}
 
 					// Above
-					if (i != 0 && cellsWithAll[i - 1][j].getMinesNearby() != 999) {
-						cellsWithAll[i - 1][j].increaseMinesNearbyByOne();
+					if (i != 0 && cellsArray[i - 1][j].getMinesNearby() != 999) {
+						cellsArray[i - 1][j].increaseMinesNearbyByOne();
 					}
 
 					// Bottom
-					if (i != 9 && cellsWithAll[i + 1][j].getMinesNearby() != 999) {
-						cellsWithAll[i + 1][j].increaseMinesNearbyByOne();
+					if (i != 9 && cellsArray[i + 1][j].getMinesNearby() != 999) {
+						cellsArray[i + 1][j].increaseMinesNearbyByOne();
 					}
 
 				}
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * This is to print a current progress by using a data stored in cellsToShow
 	 * arrays 1. If a cell is not selected, it prints "?" 2. If a cell has been
 	 * selected and is a non mine cell, print a number 3. If a cell has been
 	 * selected and is a mine cell, print "X"
 	 */
-	public static void printProgress() {
+	public void printProgress() {
 
 		// Insert tab space
 		System.out.print("\t");
@@ -207,19 +216,19 @@ public class Minesweeper {
 			System.out.print(" " + i + "\t| ");
 
 			for (int j = 0; j < 10; j++) {
-				Cell current = cellsWithAll[i][j];
-				
-				if(current.getIsRevealed()) {
+				Cell current = cellsArray[i][j];
+
+				if (current.getIsRevealed()) {
 					// For the cells that a user has selected
-					
-					 if (current.getMinesNearby() == 0) {
+
+					if (current.getMinesNearby() == 0) {
 						// For a cell with no mines nearby
 						System.out.print(" ");
-	
+
 					} else if (current.getMinesNearby() == 999) {
 						// For a cell with a mine
 						System.out.print("x");
-	
+
 					} else {
 						// For a non-mine cell with numbers --> 1 ~ 8
 						System.out.print(current.getMinesNearby());
@@ -235,15 +244,14 @@ public class Minesweeper {
 
 		}
 	}
-	
-	
+
 	/**
 	 * @param message to show a user as an error indicator
 	 * @return return the valid input value
 	 * 
-	 *         This is to validate the user input and returns the valid number
+	 * This is to validate the user input and returns the valid number
 	 */
-	public static int getUserInput(String message) {
+	public int getUserInput(String message) {
 		boolean isValid = false;
 		int input = 0;
 
@@ -266,38 +274,36 @@ public class Minesweeper {
 		}
 		return input;
 	}
-	
-	
+
 	/**
 	 * @return boolean value to indicate if ther is any cells with mine that has been revealed
 	 * 
 	 * This is to check if a user has revealed all cells except mines (90 cells by default)
 	 */
-	public static boolean hasRevealedAll() {
-		for(int i = 0; i < cellsWithAll.length; i++) {
-			for(int j = 0; j < cellsWithAll[i].length; j++) {
-				Cell current = cellsWithAll[i][j];
-				
-				if(!current.getIsRevealed() && !current.getHasMine()) {
+	public boolean hasRevealedAll() {
+		for (int i = 0; i < cellsArray.length; i++) {
+			for (int j = 0; j < cellsArray[i].length; j++) {
+				Cell current = cellsArray[i][j];
+
+				if (!current.getIsRevealed() && !current.getHasMine()) {
 					return false;
 				}
 			}
 		}
-		
+
 		return true;
 	}
-	
-	
+
 	/**
 	 * It prints a message depending on the user results
 	 */
-	public static void showResult() {
+	public void showResult() {
 		printProgress();
 		System.out.println();
 		System.out.println();
 		System.out.println();
-		
-		if(!hasNextTurn) {
+
+		if (!hasNextTurn) {
 			System.out.println("!!! Booom !!!\nGame Over...");
 		} else {
 			System.out.println("You won!");
@@ -305,6 +311,28 @@ public class Minesweeper {
 	}
 	
 	
+	/**
+	 * This is to handle whether or not a user continues playing a game, 
+	 * 	show different message depending on the user's selection
+	 */
+	public void handlePlayAgain() {
+		System.out.println();
+		System.out.println("Would you like to play again?\ny --> Play again\nn --> Stop playing");
+		
+		char input = userInputScanner.next().charAt(0);
+		
+		
+		if (input != 'y') {
+			System.out.println();
+			System.out.println("Bye for now!");
+			playAgain = false;
+		} else {
+			System.out.println();
+			System.out.println("Got it, let's try again!");
+			System.out.println();
+		}
+	}
+
 	// For dev purpuse
 	public static void printAll() {
 
@@ -326,17 +354,16 @@ public class Minesweeper {
 			System.out.print(" " + i + "\t| ");
 
 			for (int j = 0; j < 10; j++) {
-				Cell current = cellsWithAll[i][j];
-				
-					if (current.getMinesNearby() == 999) {
-						// For a mine cell
-						System.out.print("x");
-	
-					} else {
-						// For a non-mine cell --> 1 ~ 8
-						System.out.print(current.getMinesNearby());
-					}
-				
+				Cell current = cellsArray[i][j];
+
+				if (current.getMinesNearby() == 999) {
+					// For a mine cell
+					System.out.print("x");
+
+				} else {
+					// For a non-mine cell --> 1 ~ 8
+					System.out.print(current.getMinesNearby());
+				}
 
 				// Print | for the end of coordinate
 				System.out.print(" | ");
