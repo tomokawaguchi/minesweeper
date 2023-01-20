@@ -13,7 +13,7 @@ public class Minesweeper {
 
 	// To keep track of if a game is still continuing or not
 	private boolean hasNextTurn = true;
-	
+
 	// Scanner to read user's input
 	private Scanner userInputScanner = new Scanner(System.in);
 
@@ -27,9 +27,12 @@ public class Minesweeper {
 		minsweeperGame.placeCells();
 
 		while (minsweeperGame.playAgain) {
-			
+
 			// Reset the hasNextTurn
 			minsweeperGame.hasNextTurn = true;
+			
+			// Reset the fields of each Cell
+			minsweeperGame.resetCells();
 
 			// Generate a random number pairs for mine coordinates
 			int[][] minesCoordinates = minsweeperGame.generateRandomMineCoordinate();
@@ -39,9 +42,9 @@ public class Minesweeper {
 
 			// Allocate the numbers around the mines in cellsArray
 			minsweeperGame.handleNumOfMinesSurrounded();
-			
-			// ---- DELETE LATER ---- 
-			//printAll(); // for the dev purpose
+
+			// ---- DELETE LATER ----
+			printAll(); // for the dev purpose
 
 			while (minsweeperGame.hasNextTurn) {
 				// Print a current progress of a game
@@ -58,13 +61,18 @@ public class Minesweeper {
 				Cell selectedCell = cellsArray[minsweeperGame.userInput[0]][minsweeperGame.userInput[1]];
 
 				// Update the Cell state
-				selectedCell.setIsRevealed();
+				selectedCell.setIsRevealed(true);
+
+				// Check if surrounding cells can be revealed or not
+				minsweeperGame.revealSurroundingCells();
 
 				// If selected cell has mine, exit
-				if (selectedCell.getMinesNearby() == 999) minsweeperGame.hasNextTurn = false;
+				if (selectedCell.getMinesNearby() == 999)
+					minsweeperGame.hasNextTurn = false;
 
 				// If a use reveals all the cell except mines, break out the loop
-				if (minsweeperGame.hasRevealedAll()) break;
+				if (minsweeperGame.hasRevealedAll())
+					break;
 			}
 
 			// Show Result
@@ -72,11 +80,10 @@ public class Minesweeper {
 
 			// Ask a user if playing again
 			minsweeperGame.handlePlayAgain();
-			
+
 		}
 
-	}	
-	
+	}
 
 	/**
 	 * Placing a default Cell classes in 10x10 arrays
@@ -88,7 +95,24 @@ public class Minesweeper {
 			}
 		}
 	}
-
+	
+	/**
+	 * 
+	 * Loop through cellsArray to reset all the fields of each Cell
+	 * 
+	 */
+	public void resetCells() {
+		for (int i = 0; i < cellsArray.length; i++) {
+			for (int j = 0; j < cellsArray[i].length; j++) {
+				cellsArray[i][j].setHasMine(false);
+				cellsArray[i][j].setMinesNearby(0);
+				cellsArray[i][j].setIsRevealed(false);
+				cellsArray[i][j].setResult(" ");
+			}	
+		}
+	}
+	
+	
 	/**
 	 * @return 2D int arrays that has 10 slots, and each has a pair of coordinate
 	 *         with number between 0 ~ 9
@@ -119,8 +143,9 @@ public class Minesweeper {
 
 	/**
 	 * 
-	 * @param minesCoordinates is 2D arrays that contains non-identical pairs of numbers
-	 * Looping through minesCoordinates arrays to log 999 at the mine coordinate position
+	 * @param minesCoordinates is 2D arrays that contains non-identical pairs of
+	 *                         numbers Looping through minesCoordinates arrays to
+	 *                         log 999 at the mine coordinate position
 	 * 
 	 */
 	public void placeMines(int[][] minesCoordinates) {
@@ -129,6 +154,7 @@ public class Minesweeper {
 			// 999 to indicate it's a cell with mine
 			cellsArray[coordinate[0]][coordinate[1]].setMinesNearby(999);
 			cellsArray[coordinate[0]][coordinate[1]].setHasMine(true);
+			cellsArray[coordinate[0]][coordinate[1]].setResult("x");
 		}
 	}
 
@@ -140,52 +166,136 @@ public class Minesweeper {
 		for (int i = 0; i < cellsArray.length; i++) {
 			for (int j = 0; j < cellsArray[i].length; j++) {
 
-				if (cellsArray[i][j].getMinesNearby() == 999) {
+				if (cellsArray[i][j].getHasMine()) {
 					if (j != 0) {
 						// left
-						if (cellsArray[i][j - 1].getMinesNearby() != 999) {
+						if (!cellsArray[i][j - 1].getHasMine()) {
 							cellsArray[i][j - 1].increaseMinesNearbyByOne();
+							cellsArray[i][j - 1].setResult(Integer.toString(cellsArray[i][j - 1].getMinesNearby()));
 						}
 
 						// left up
-						if (i != 0 && cellsArray[i - 1][j - 1].getMinesNearby() != 999) {
+						if (i != 0 && !cellsArray[i - 1][j - 1].getHasMine()) {
 							cellsArray[i - 1][j - 1].increaseMinesNearbyByOne();
+							cellsArray[i - 1][j - 1]
+									.setResult(Integer.toString(cellsArray[i - 1][j - 1].getMinesNearby()));
 						}
 
 						// left bottom
-						if (i != 9 && cellsArray[i + 1][j - 1].getMinesNearby() != 999) {
+						if (i != 9 && !cellsArray[i + 1][j - 1].getHasMine()) {
 							cellsArray[i + 1][j - 1].increaseMinesNearbyByOne();
+							cellsArray[i + 1][j - 1]
+									.setResult(Integer.toString(cellsArray[i + 1][j - 1].getMinesNearby()));
 						}
 
 					}
 
 					if (j != 9) {
 						// right
-						if (cellsArray[i][j + 1].getMinesNearby() != 999) {
+						if (!cellsArray[i][j + 1].getHasMine()) {
 							cellsArray[i][j + 1].increaseMinesNearbyByOne();
+							cellsArray[i][j + 1].setResult(Integer.toString(cellsArray[i][j + 1].getMinesNearby()));
 						}
 
 						// right up
-						if (i != 0 && cellsArray[i - 1][j + 1].getMinesNearby() != 999) {
+						if (i != 0 && !cellsArray[i - 1][j + 1].getHasMine()) {
 							cellsArray[i - 1][j + 1].increaseMinesNearbyByOne();
+							cellsArray[i - 1][j + 1]
+									.setResult(Integer.toString(cellsArray[i - 1][j + 1].getMinesNearby()));
 						}
 
 						// right bottom
-						if (i != 9 && cellsArray[i + 1][j + 1].getMinesNearby() != 999) {
+						if (i != 9 && !cellsArray[i + 1][j + 1].getHasMine()) {
 							cellsArray[i + 1][j + 1].increaseMinesNearbyByOne();
+							cellsArray[i + 1][j + 1]
+									.setResult(Integer.toString(cellsArray[i + 1][j + 1].getMinesNearby()));
 						}
 					}
 
 					// Above
-					if (i != 0 && cellsArray[i - 1][j].getMinesNearby() != 999) {
+					if (i != 0 && !cellsArray[i - 1][j].getHasMine()) {
 						cellsArray[i - 1][j].increaseMinesNearbyByOne();
+						cellsArray[i - 1][j].setResult(Integer.toString(cellsArray[i - 1][j].getMinesNearby()));
 					}
 
 					// Bottom
-					if (i != 9 && cellsArray[i + 1][j].getMinesNearby() != 999) {
+					if (i != 9 && !cellsArray[i + 1][j].getHasMine()) {
 						cellsArray[i + 1][j].increaseMinesNearbyByOne();
+						cellsArray[i + 1][j].setResult(Integer.toString(cellsArray[i + 1][j].getMinesNearby()));
 					}
 
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * This is to check if the cells around the selected cell can be revealed or not
+	 * 
+	 */
+	public void revealSurroundingCells() {
+		// For the surrounding cells
+		for (int i = 0; i < cellsArray.length; i++) {
+			for (int j = 0; j < cellsArray[i].length; j++) {
+				
+				if(i == userInput[0] && j == userInput[1]) {
+					
+					if (j != 0) {
+						// left
+						if (cellsArray[i][j - 1].getMinesNearby() == 0) {
+							cellsArray[i][j - 1].setResult(" ");
+							cellsArray[i][j - 1].setIsRevealed(true);
+						}
+
+						// left up
+						if (i != 0 && cellsArray[i - 1][j - 1].getMinesNearby() == 0) {
+							cellsArray[i - 1][j - 1].setResult(" ");
+							cellsArray[i - 1][j - 1].setIsRevealed(true);
+						}
+
+						// left bottom
+						if (i != 9 && cellsArray[i + 1][j - 1].getMinesNearby() == 0) {
+							cellsArray[i + 1][j - 1].setResult(" ");
+							cellsArray[i + 1][j - 1].setIsRevealed(true);
+						}
+
+					}
+					
+					if (j != 9) {
+						// right
+						if (cellsArray[i][j + 1].getMinesNearby() == 0) {
+							cellsArray[i][j + 1].setResult(" ");
+							cellsArray[i][j + 1].setIsRevealed(true);
+						}
+
+						// right up
+						if (i != 0 && cellsArray[i - 1][j + 1].getMinesNearby() == 0) {
+							cellsArray[i - 1][j + 1].setResult(" ");
+							cellsArray[i - 1][j + 1].setIsRevealed(true);
+						}
+
+						// right bottom
+						if (i != 9 && cellsArray[i + 1][j + 1].getMinesNearby() == 0) {
+							cellsArray[i + 1][j + 1].setResult(" ");
+							cellsArray[i + 1][j + 1].setIsRevealed(true);
+						}
+					}
+					
+					
+					// Above
+					if (i != 0 && cellsArray[i - 1][j].getMinesNearby() == 0) {
+						cellsArray[i - 1][j].setResult(" ");
+						cellsArray[i - 1][j].setIsRevealed(true);
+					}
+					
+					// Bottom
+					if (i != 9 && cellsArray[i + 1][j].getMinesNearby() == 0) {
+						cellsArray[i + 1][j].setResult(" ");
+						cellsArray[i + 1][j].setIsRevealed(true);
+					}
+					
 				}
 			}
 		}
@@ -220,20 +330,8 @@ public class Minesweeper {
 				Cell current = cellsArray[i][j];
 
 				if (current.getIsRevealed()) {
-					// For the cells that a user has selected
+					System.out.print(current.getResult());
 
-					if (current.getMinesNearby() == 0) {
-						// For a cell with no mines nearby
-						System.out.print(" ");
-
-					} else if (current.getMinesNearby() == 999) {
-						// For a cell with a mine
-						System.out.print("x");
-
-					} else {
-						// For a non-mine cell with numbers --> 1 ~ 8
-						System.out.print(current.getMinesNearby());
-					}
 				} else {
 					// For the cells that has not selected yet
 					System.out.print("?");
@@ -250,7 +348,7 @@ public class Minesweeper {
 	 * @param message to show a user as an error indicator
 	 * @return return the valid input value
 	 * 
-	 * This is to validate the user input and returns the valid number
+	 *         This is to validate the user input and returns the valid number
 	 */
 	public int getUserInput(String message) {
 		boolean isValid = false;
@@ -277,9 +375,11 @@ public class Minesweeper {
 	}
 
 	/**
-	 * @return boolean value to indicate if ther is any cells with mine that has been revealed
+	 * @return boolean value to indicate if ther is any cells with mine that has
+	 *         been revealed
 	 * 
-	 * This is to check if a user has revealed all cells except mines (90 cells by default)
+	 *         This is to check if a user has revealed all cells except mines (90
+	 *         cells by default)
 	 */
 	public boolean hasRevealedAll() {
 		for (int i = 0; i < cellsArray.length; i++) {
@@ -310,19 +410,17 @@ public class Minesweeper {
 			System.out.println("You won!");
 		}
 	}
-	
-	
+
 	/**
-	 * This is to handle whether or not a user continues playing a game, 
-	 * 	show different message depending on the user's selection
+	 * This is to handle whether or not a user continues playing a game, show
+	 * different message depending on the user's selection
 	 */
 	public void handlePlayAgain() {
 		System.out.println();
 		System.out.println("Would you like to play again?\ny --> Play again\nn --> Stop playing");
-		
+
 		char input = userInputScanner.next().charAt(0);
-		
-		
+
 		if (input != 'y') {
 			System.out.println();
 			System.out.println("Bye for now!");
@@ -335,41 +433,38 @@ public class Minesweeper {
 	}
 
 	// For dev purpose
-//	public static void printAll() {
-//
-//		// Insert tab space
-//		System.out.print("\t");
-//
-//		// For the coordinates for the row
-//		for (int i = 0; i < 10; i++) {
-//			System.out.print("  " + i + " ");
-//		}
-//
-//		System.out.println(); // Insert one line for readability
-//
-//		// For the each columns
-//		for (int i = 0; i < 10; i++) {
-//			// For the coordinates for the columns
-//			// Insert tab space and |
-//			System.out.println();
-//			System.out.print(" " + i + "\t| ");
-//
-//			for (int j = 0; j < 10; j++) {
-//				Cell current = cellsArray[i][j];
-//
-//				if (current.getMinesNearby() == 999) {
-//					// For a mine cell
-//					System.out.print("x");
-//
-//				} else {
-//					// For a non-mine cell --> 1 ~ 8
-//					System.out.print(current.getMinesNearby());
-//				}
-//
-//				// Print | for the end of coordinate
-//				System.out.print(" | ");
-//			}
-//
-//		}
-//	}
+	public static void printAll() {
+
+		// Insert tab space
+		System.out.print("\t");
+
+		// For the coordinates for the row
+		for (int i = 0; i < 10; i++) {
+			System.out.print("  " + i + " ");
+		}
+
+		System.out.println(); // Insert one line for readability
+
+		// For the each columns
+		for (int i = 0; i < 10; i++) {
+			// For the coordinates for the columns
+			// Insert tab space and |
+			System.out.println();
+			System.out.print(" " + i + "\t| ");
+
+			for (int j = 0; j < 10; j++) {
+				Cell current = cellsArray[i][j];
+
+				System.out.print(current.getResult());
+//				System.out.print(current.getMinesNearby());
+
+				// Print | for the end of coordinate
+				System.out.print(" | ");
+			}
+
+		}
+		
+		System.out.println();
+		System.out.println();
+	}
 }

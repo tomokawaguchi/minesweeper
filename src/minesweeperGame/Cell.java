@@ -4,11 +4,13 @@ public class Cell {
 	private boolean hasMine;
 	private int minesNearby;
 	private boolean isRevealed;
+	private String result;
 	
 	public Cell() {
 		this.hasMine = false;
 		this.minesNearby = 0;
 		this.isRevealed = false;
+		this.result = " ";
 	}
 	
 	public boolean getHasMine() {
@@ -23,6 +25,14 @@ public class Cell {
 		this.minesNearby = n;
 	}
 	
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
 	public void increaseMinesNearbyByOne() {
 		this.minesNearby += 1;
 	}
@@ -31,8 +41,8 @@ public class Cell {
 		return this.minesNearby;
 	}
 	
-	public void setIsRevealed() {
-		this.isRevealed = true;
+	public void setIsRevealed(boolean b) {
+		this.isRevealed = b;
 	}
 	
 	public boolean getIsRevealed() {
