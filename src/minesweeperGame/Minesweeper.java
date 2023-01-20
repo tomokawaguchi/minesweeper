@@ -21,65 +21,65 @@ public class Minesweeper {
 
 	public static void main(String[] args) {
 		// Minesweeper instance
-		Minesweeper minsweeperGame = new Minesweeper();
+		Minesweeper minesweeperGame = new Minesweeper();
 
 		// Placing a default Cell classes in 10x10 arrays
-		minsweeperGame.placeCells();
+		minesweeperGame.placeCells();
 
-		while (minsweeperGame.playAgain) {
+		while (minesweeperGame.playAgain) {
 
 			// Reset the hasNextTurn
-			minsweeperGame.hasNextTurn = true;
+			minesweeperGame.hasNextTurn = true;
 			
 			// Reset the fields of each Cell
-			minsweeperGame.resetCells();
+			minesweeperGame.resetCells();
 
 			// Generate a random number pairs for mine coordinates
-			int[][] minesCoordinates = minsweeperGame.generateRandomMineCoordinate();
+			int[][] minesCoordinates = minesweeperGame.generateRandomMineCoordinate();
 
 			// Place mines based on the random coordinates generated
-			minsweeperGame.placeMines(minesCoordinates);
+			minesweeperGame.placeMines(minesCoordinates);
 
 			// Allocate the numbers around the mines in cellsArray
-			minsweeperGame.handleNumOfMinesSurrounded();
+			minesweeperGame.handleNumOfMinesSurrounded();
 
 			// ---- DELETE LATER ----
-			printAll(); // for the dev purpose
+			// printAll(); // for the dev purpose
 
-			while (minsweeperGame.hasNextTurn) {
+			while (minesweeperGame.hasNextTurn) {
 				// Print a current progress of a game
-				minsweeperGame.printProgress();
+				minesweeperGame.printProgress();
 
 				System.out.println();
 				System.out.println();
 
 				// Validate the input if it's integer
-				minsweeperGame.userInput[0] = minsweeperGame.getUserInput("Enter Column Number: ");
-				minsweeperGame.userInput[1] = minsweeperGame.getUserInput("Enter Row Number: ");
+				minesweeperGame.userInput[0] = minesweeperGame.getUserInput("Enter Column Number: ");
+				minesweeperGame.userInput[1] = minesweeperGame.getUserInput("Enter Row Number: ");
 
 				// Look up selected coordinate in cellsArray
-				Cell selectedCell = cellsArray[minsweeperGame.userInput[0]][minsweeperGame.userInput[1]];
+				Cell selectedCell = cellsArray[minesweeperGame.userInput[0]][minesweeperGame.userInput[1]];
 
 				// Update the Cell state
 				selectedCell.setIsRevealed(true);
 
 				// Check if surrounding cells can be revealed or not
-				minsweeperGame.revealSurroundingCells();
+				minesweeperGame.revealSurroundingCells();
 
 				// If selected cell has mine, exit
 				if (selectedCell.getMinesNearby() == 999)
-					minsweeperGame.hasNextTurn = false;
+					minesweeperGame.hasNextTurn = false;
 
 				// If a use reveals all the cell except mines, break out the loop
-				if (minsweeperGame.hasRevealedAll())
+				if (minesweeperGame.hasRevealedAll())
 					break;
 			}
 
 			// Show Result
-			minsweeperGame.showResult();
+			minesweeperGame.showResult();
 
 			// Ask a user if playing again
-			minsweeperGame.handlePlayAgain();
+			minesweeperGame.handlePlayAgain();
 
 		}
 
@@ -240,7 +240,7 @@ public class Minesweeper {
 		for (int i = 0; i < cellsArray.length; i++) {
 			for (int j = 0; j < cellsArray[i].length; j++) {
 				
-				if(i == userInput[0] && j == userInput[1]) {
+				if(i == userInput[0] && j == userInput[1] && cellsArray[i][j].getMinesNearby() == 0) {
 					
 					if (j != 0) {
 						// left
@@ -433,38 +433,38 @@ public class Minesweeper {
 	}
 
 	// For dev purpose
-	public static void printAll() {
+	// public static void printAll() {
 
-		// Insert tab space
-		System.out.print("\t");
+	// 	// Insert tab space
+	// 	System.out.print("\t");
 
-		// For the coordinates for the row
-		for (int i = 0; i < 10; i++) {
-			System.out.print("  " + i + " ");
-		}
+	// 	// For the coordinates for the row
+	// 	for (int i = 0; i < 10; i++) {
+	// 		System.out.print("  " + i + " ");
+	// 	}
 
-		System.out.println(); // Insert one line for readability
+	// 	System.out.println(); // Insert one line for readability
 
-		// For the each columns
-		for (int i = 0; i < 10; i++) {
-			// For the coordinates for the columns
-			// Insert tab space and |
-			System.out.println();
-			System.out.print(" " + i + "\t| ");
+	// 	// For the each columns
+	// 	for (int i = 0; i < 10; i++) {
+	// 		// For the coordinates for the columns
+	// 		// Insert tab space and |
+	// 		System.out.println();
+	// 		System.out.print(" " + i + "\t| ");
 
-			for (int j = 0; j < 10; j++) {
-				Cell current = cellsArray[i][j];
+	// 		for (int j = 0; j < 10; j++) {
+	// 			Cell current = cellsArray[i][j];
 
-				System.out.print(current.getResult());
-//				System.out.print(current.getMinesNearby());
+	// 			System.out.print(current.getResult());
+	// 			// System.out.print(current.getMinesNearby());
 
-				// Print | for the end of coordinate
-				System.out.print(" | ");
-			}
+	// 			// Print | for the end of coordinate
+	// 			System.out.print(" | ");
+	// 		}
 
-		}
+	// 	}
 		
-		System.out.println();
-		System.out.println();
-	}
+	// 	System.out.println();
+	// 	System.out.println();
+	// }
 }
