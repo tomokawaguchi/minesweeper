@@ -31,7 +31,7 @@ The aim of this project is to reinforce my foundamental learning in Java by writ
 
 ## Technical Implementation
 
-Since it is played in the consile and in order to communicate with a user, `Scanner` class is used to read the inputs in the console. Also `while` loop is used to kepp rendering the latest progress of the game in every turn of the game. As one of the project requirements, the minesweeper table should holds 100 cells/spot that a user can select, and I have created custom class of 'Cell' that represents indivisual spot in a game table. The `Cell` class holds fields of `hasMine`, `minesNearby`, `isRevealed`, and `result` that will be updated and utilised through the game. 
+Since it is played in the console, in order to communicate with a user, `Scanner` class is used to read the inputs in the console. Also `while` loop is used to kepp rendering the latest progress of the game in every turn of the game. As one of the project requirements, the minesweeper table should holds 100 cells/spot that a user can select, and I have created custom class of 'Cell' that represents indivisual spot in a game table. The `Cell` class holds fields of `hasMine`, `minesNearby`, `isRevealed`, and `result` that will be updated and utilised through the game. 
 
 Some of the featured functionalities are:
 
