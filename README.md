@@ -37,7 +37,7 @@ Some of the featured functionalities are:
 
 **1. Selecting random pair of coordinate**
 
-At the beginning of the game, I have written a logic to set up random 10 pair of coordinates that will be used for coordinates of mines in 10 x 10 grids field. These are sstored in 2D int array (`new int[10][2]`). `generateRandomMineCoordinate()` ensures that not only generates 10 pairs of coordinates but also these are all unique to each other. 
+At the beginning of the game, I have written a logic to set up random 10 pair of coordinates that will be used for coordinates of mines in 10 x 10 grids field. These are stored in 2D int array (`new int[10][2]`). `generateRandomMineCoordinate()` ensures that not only generates 10 pairs of coordinates but also these are all unique to each other. 
 
 **2. Assigning a number of mines surrounded in each Cell class**
 
@@ -50,7 +50,7 @@ In a real minesweeper game, if you select a cell with no number allocated, it wi
 
 ## Refection
 
-- Initially I have almost achieved this project without `Cell` class. However I start to realise that it would be very handly to have `Cell` class that can hold each state such as `hasMine`,`minesNearby`and other fields that I have ended up creating. This process was very interesting as it have made me realised how powerful it is to create your own class in such situation.
+- Initially I have almost achieved this project without `Cell` class by. utilisiung 2 of 2D arrays. However I start to realise that it would be very handly to have `Cell` class that can hold each state such as `hasMine`,`minesNearby`and other fields that I have ended up creating. This process was very interesting as it have made me realised how powerful it is to create your own class in such situation.
 
 - It was a great challenge to handle 2D arrays constantly, which is quite different situation from past projects in JavaScript.  
 
