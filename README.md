@@ -50,7 +50,7 @@ In a real minesweeper game, if you select a cell with no number allocated, it wi
 
 ## Refection
 
-- Initially I have almost achieved this project without `Cell` class by utilisiung 2 of 2D arrays. However I start to realise that it would be very handly to have `Cell` class that can hold each state such as `hasMine`,`minesNearby`and other fields that I have ended up creating. This process was very interesting as it have made me realised how powerful it is to create your own class in such situation.
+- Initially I have almost achieved this project without `Cell` class by utilisiung 2 of 2D arrays. However I start to realise that it would be very handy to have `Cell` class that can hold each state such as `hasMine`,`minesNearby`and other fields that I have ended up creating. This process was very interesting as it have made me realised how powerful it is to create your own class in such situation.
 
 - It was a great challenge to handle 2D arrays constantly, which is quite different situation from past projects in JavaScript.  
 
